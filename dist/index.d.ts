@@ -704,6 +704,8 @@ declare namespace jspreadsheet {
     /** Activate the table lazyloading. */
     lazyLoading?: boolean;
 
+    /** Activate the table lazyloading. */
+    lazyLoadRows?: number;
     /**
      * Show a loading spin while populating the table.
      * @default false

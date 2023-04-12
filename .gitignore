@@ -1,3 +1,6 @@
 /package-lock.json
 .idea
 docs
+.npmrc
+node_modules
+yarn.lock

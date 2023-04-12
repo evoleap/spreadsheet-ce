@@ -6060,6 +6060,8 @@ if (! jSuites && typeof(require) === 'function') {
             parseTableAutoCellType:false,
             // Disable corner selection
             selectionCopy:true,
+            // Default number of rows to be loaded
+            lazyLoadRows: 100,
             // Merged cells
             mergeCells:{},
             // Create toolbar
@@ -6786,9 +6788,9 @@ if (! jSuites && typeof(require) === 'function') {
 
             // Lazy loading
             if (obj.options.lazyLoading == true) {
-                // Load only 100 records
+                // Load only obj.options.lazyLoadRows records
                 var startNumber = 0
-                var finalNumber = obj.options.data.length < 100 ? obj.options.data.length : 100;
+                var finalNumber = obj.options.data.length < obj.options.lazyLoadRows ? obj.options.data.length : obj.options.lazyLoadRows;
 
                 if (obj.options.pagination) {
                     obj.options.pagination = false;
@@ -11669,7 +11671,7 @@ if (! jSuites && typeof(require) === 'function') {
             }
 
             // Per page
-            var quantityPerPage = 100;
+            var quantityPerPage = obj.options.lazyLoadRows;
 
             // pageNumber
             if (pageNumber == null || pageNumber == -1) {
@@ -11682,7 +11684,7 @@ if (! jSuites && typeof(require) === 'function') {
             if (finalRow > results.length) {
                 finalRow = results.length;
             }
-            startRow = finalRow - 100;
+            startRow = finalRow - obj.options.lazyLoadRows;
             if (startRow < 0) {
                 startRow = 0;
             }
@@ -11709,14 +11711,14 @@ if (! jSuites && typeof(require) === 'function') {
                 var results = obj.rows;
             }
             var test = 0;
-            if (results.length > 100) {
+            if (results.length > obj.options.lazyLoadRows) {
                 // Get the first element in the page
                 var item = parseInt(obj.tbody.firstChild.getAttribute('data-y'));
                 if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
                     item = results.indexOf(item);
                 }
                 if (item > 0) {
-                    for (var j = 0; j < 30; j++) {
+                    for (var j = 0; j < (obj.options.lazyLoadRows/3); j++) {
                         item = item - 1;
                         if (item > -1) {
                             if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
@@ -11724,7 +11726,7 @@ if (! jSuites && typeof(require) === 'function') {
                             } else {
                                 obj.tbody.insertBefore(obj.rows[item], obj.tbody.firstChild);
                             }
-                            if (obj.tbody.children.length > 100) {
+                            if (obj.tbody.children.length > obj.options.lazyLoadRows) {
                                 obj.tbody.removeChild(obj.tbody.lastChild);
                                 test = 1;
                             }
@@ -11743,21 +11745,21 @@ if (! jSuites && typeof(require) === 'function') {
                 var results = obj.rows;
             }
             var test = 0;
-            if (results.length > 100) {
+            if (results.length > obj.options.lazyLoadRows) {
                 // Get the last element in the page
                 var item = parseInt(obj.tbody.lastChild.getAttribute('data-y'));
                 if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
                     item = results.indexOf(item);
                 }
                 if (item < obj.rows.length - 1) {
-                    for (var j = 0; j <= 30; j++) {
+                    for (var j = 0; j <= (obj.options.lazyLoadRows/3); j++) {
                         if (item < results.length) {
                             if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
                                 obj.tbody.appendChild(obj.rows[results[item]]);
                             } else {
                                 obj.tbody.appendChild(obj.rows[item]);
                             }
-                            if (obj.tbody.children.length > 100) {
+                            if (obj.tbody.children.length > obj.options.lazyLoadRows) {
                                 obj.tbody.removeChild(obj.tbody.firstChild);
                                 test = 1;
                             }
@@ -11772,9 +11774,9 @@ if (! jSuites && typeof(require) === 'function') {
 
         obj.loadValidation = function() {
             if (obj.selectedCell) {
-                var currentPage = parseInt(obj.tbody.firstChild.getAttribute('data-y')) / 100;
-                var selectedPage = parseInt(obj.selectedCell[3] / 100);
-                var totalPages = parseInt(obj.rows.length / 100);
+                var currentPage = parseInt(obj.tbody.firstChild.getAttribute('data-y')) / obj.options.lazyLoadRows;
+                var selectedPage = parseInt(obj.selectedCell[3] / obj.options.lazyLoadRows);
+                var totalPages = parseInt(obj.rows.length / obj.options.lazyLoadRows);
 
                 if (currentPage != selectedPage && selectedPage <= totalPages) {
                     if (! Array.prototype.indexOf.call(obj.tbody.children, obj.rows[obj.selectedCell[3]])) {
@@ -11870,7 +11872,7 @@ if (! jSuites && typeof(require) === 'function') {
 
             // Page 1
             if (obj.options.lazyLoading == true) {
-                total = 100;
+                total = obj.options.lazyLoadRows;
             } else if (obj.options.pagination > 0) {
                 total = obj.options.pagination;
             } else {
